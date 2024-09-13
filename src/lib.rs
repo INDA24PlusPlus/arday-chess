@@ -31,6 +31,62 @@ pub fn getPieceFromPosition(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> ch
     board[piecePos[0]][piecePos[1]]
 }
 
+pub fn hasEnemyPiece(board: &Vec<Vec<char>>, pos: &Vec<usize>, currentPiece: char) -> bool {
+    let piece = getPieceFromPosition(&board, &pos);
+
+    if currentPiece.is_uppercase() && piece.is_lowercase() {
+        return true;
+    }
+
+    if currentPiece.is_lowercase() && piece.is_uppercase() {
+        return true;
+    }
+
+    false
+}
+
+pub fn getPawnCapturePos(board: &Vec<Vec<char>>, pawnPos: &Vec<usize>, pawn: char) -> Option<Vec<Vec<usize>>> {
+    let mut target = Vec::new();
+    let mut targetRank = 0;
+
+    if (pawn.is_lowercase()) {
+        targetRank = pawnPos[0] + 1;
+    }
+
+    else {
+        targetRank = pawnPos[0] - 1;
+    }
+
+    let square1 = pawnPos[1] + 1;
+    let square2 = pawnPos[1] - 1;
+
+    let target1 = Vec::from([targetRank, square1]);
+    let target2 = Vec::from([targetRank, square2]);
+
+    let hasEnemy1 = hasEnemyPiece(&board, &target1);
+    let hasEnemy2 = hasEnemyPiece(&board, &target2);
+
+    if pawnPos[1] == 0 && hasEnemy1 {
+        target.push(Vec::from([targetRank, square1]));
+    }
+
+    else if pawnPos[1] == 7 && hasEnemy2 {
+        target.push(Vec::from([targetRank, square2]));
+    }
+
+    else {
+        if hasEnemy1 {
+            target.push(Vec::from([targetRank, square1]));
+        }
+
+        if hasEnemy2 {
+            target.push(Vec::from([targetRank, square2]));
+        }
+    }
+
+    Some(target)
+}
+
 pub fn getLegalMovesForPawn(board: &Vec<Vec<char>>, pawnPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
     let piece = getPieceFromPosition(&board, &pawnPos);
 
@@ -38,20 +94,20 @@ pub fn getLegalMovesForPawn(board: &Vec<Vec<char>>, pawnPos: &Vec<usize>) -> Opt
 
     if piece == 'p' {
         if pawnPos[0] == 1 {
-            positions.push(Vec::from([3, pawnPos[1]]));
+            positions.push(Vec::from([3, pawnPos[1]])); // 2 step pawn move
         }
 
-        positions.push(Vec::from([2, pawnPos[1]]));
+        positions.push(Vec::from([2, pawnPos[1]])); // 1 step pawn move
 
         return Some(positions);
     }
 
     else if piece == 'P' {
         if pawnPos[0] == 6 {
-            positions.push(Vec::from([4, pawnPos[1]]));
+            positions.push(Vec::from([4, pawnPos[1]])); // 2 step pawn move
         }
 
-        positions.push(Vec::from([5, pawnPos[1]]));
+        positions.push(Vec::from([5, pawnPos[1]])); // 1 step pawn move
 
         return Some(positions);
     }
