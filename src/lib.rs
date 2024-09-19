@@ -116,6 +116,21 @@ pub fn getLegalMovesForPawn(board: &Vec<Vec<char>>, pawnPos: &Vec<usize>) -> Opt
     None
 }
 
+pub fn getLegalMovesForKnight(board: &Vec<Vec<char>>, knightPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = getPieceFromPosition(&board, &knightPos);
+    let mut positions = Vec::new();
+    let rank = knightPos[0];
+    let file = knightPos[1];
+
+    if piece == 'n' || piece == 'N' {
+        positions.push(Vec::from([rank - 2, file - 1]));
+
+        return Some(positions);
+    }
+
+    None
+}
+
 pub fn add(left: usize, right: usize) -> usize {
     let boardVector = convertFENtoVector(startingFEN);
 
