@@ -63,8 +63,8 @@ pub fn getPawnCapturePos(board: &Vec<Vec<char>>, pawnPos: &Vec<usize>, pawn: cha
     let target1 = Vec::from([targetRank, square1]);
     let target2 = Vec::from([targetRank, square2]);
 
-    let hasEnemy1 = hasEnemyPiece(&board, &target1);
-    let hasEnemy2 = hasEnemyPiece(&board, &target2);
+    let hasEnemy1 = hasEnemyPiece(&board, &target1, pawn);
+    let hasEnemy2 = hasEnemyPiece(&board, &target2, pawn);
 
     if pawnPos[1] == 0 && hasEnemy1 {
         target.push(Vec::from([targetRank, square1]));
