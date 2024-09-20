@@ -94,23 +94,25 @@ pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -
     let mut positions = Vec::new();
 
     if piece == 'p' {
-        if pawn_pos[0] == 1 {
-            positions.push(Vec::from([3, pawn_pos[1]])); // 2 step pawn move
+        if (board[pawn_pos[0] + 1][pawn_pos[1]] == '-') {
+            if pawn_pos[0] == 1 && board[3][pawn_pos[1]] == '-' {
+                positions.push(Vec::from([3, pawn_pos[1]])); // 2 step pawn move
+            }
+
+            positions.push(Vec::from([pawn_pos[0] + 1, pawn_pos[1]])); // 1 step pawn move
+
+            return Some(positions);
         }
+    } else if piece == 'P' {
+        if board[pawn_pos[0] - 1][pawn_pos[1]] == '-' {
+            if pawn_pos[0] == 6 && board[4][pawn_pos[1]] == '-' {
+                positions.push(Vec::from([4, pawn_pos[1]])); // 2 step pawn move
+            }
 
-        positions.push(Vec::from([pawn_pos[0] + 1, pawn_pos[1]])); // 1 step pawn move
+            positions.push(Vec::from([pawn_pos[0] - 1, pawn_pos[1]])); // 1 step pawn move
 
-        return Some(positions);
-    }
-
-    else if piece == 'P' {
-        if pawn_pos[0] == 6 {
-            positions.push(Vec::from([4, pawn_pos[1]])); // 2 step pawn move
+            return Some(positions);
         }
-
-        positions.push(Vec::from([pawn_pos[0] - 1, pawn_pos[1]])); // 1 step pawn move
-
-        return Some(positions);
     }
 
     println!("No pawn found");
@@ -502,7 +504,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &get_pawn_capture_pos(&board_vector, &Vec::from([4, 3]), 'P'));
+    println!("{:?}", &get_legal_moves_for_pawn(&board_vector, &Vec::from([4, 3])));
 
     left + right
 }
