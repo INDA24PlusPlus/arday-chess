@@ -166,7 +166,15 @@ pub fn get_legal_moves_for_knight(board: &Vec<Vec<char>>, knight_pos: &Vec<usize
             }
         }
 
-        return positions;
+        let mut valid_moves = Vec::new();
+
+        for position in positions {
+            if (board[position[0]][position[1]] == '-') {
+                valid_moves.push(position);
+            }
+        }
+
+        return valid_moves;
     }
 
     positions
