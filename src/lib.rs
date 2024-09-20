@@ -45,7 +45,7 @@ pub fn has_enemy_piece(board: &Vec<Vec<char>>, pos: &Vec<usize>, current_piece: 
     false
 }
 
-pub fn get_pawn_capture_pos(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>, pawn: char) -> Option<Vec<Vec<usize>>> {
+pub fn get_pawn_capture_pos(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>, pawn: char) -> Vec<Vec<usize>> {
     let mut target = Vec::new();
     let mut target_rank = 0;
 
@@ -85,10 +85,10 @@ pub fn get_pawn_capture_pos(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>, pawn:
         }
     }
 
-    Some(target)
+    target
 }
 
-pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let piece = get_piece_from_position(&board, &pawn_pos);
 
     let mut positions = Vec::new();
@@ -101,7 +101,7 @@ pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -
 
             positions.push(Vec::from([pawn_pos[0] + 1, pawn_pos[1]])); // 1 step pawn move
 
-            return Some(positions);
+            return positions;
         }
     } else if piece == 'P' {
         if board[pawn_pos[0] - 1][pawn_pos[1]] == '-' {
@@ -111,12 +111,12 @@ pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -
 
             positions.push(Vec::from([pawn_pos[0] - 1, pawn_pos[1]])); // 1 step pawn move
 
-            return Some(positions);
+            return positions;
         }
     }
 
     println!("No pawn found");
-    None
+    positions
 }
 
 pub fn get_legal_moves_for_knight(board: &Vec<Vec<char>>, knight_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
