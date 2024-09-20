@@ -395,17 +395,15 @@ pub fn get_legal_moves_for_king(board: &Vec<Vec<char>>, king_pos: &Vec<usize>) -
             positions.push(Vec::from([king_rank, king_file + 1]));
         }
 
-        let mut index = 0;
+        let mut valid_positions= Vec::new();
 
-        for position in &positions {
-            if board[position[0]][position[1]] != '-' {
-                positions.remove(index);
+        for position in positions {
+            if board[position[0]][position[1]] == '-' {
+                valid_positions.push(Vec::from(position))
             }
-
-            index += 1;
         }
 
-        return Some(positions);
+        return Some(valid_positions);
     }
 
     None
