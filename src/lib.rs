@@ -223,6 +223,84 @@ pub fn getLegalMovesForRook(board: &Vec<Vec<char>>, rookPos: &Vec<usize>) -> Opt
     None
 }
 
+fn getDiagonalMoves(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let mut positions = Vec::new();
+    let mut rank = piecePos[0];
+    let mut file = piecePos[1];
+
+    if (rank > 0 && file > 0) {
+        while true {
+            positions.push(Vec::from([rank - 1, file - 1]));
+
+            rank = rank - 1;
+            file = file - 1;
+
+            if (rank == 0 || file == 0) {
+                rank = piecePos[0];
+                file = piecePos[1];
+                break;
+            }
+        }
+    }
+
+    if (rank > 0 && file < 7) {
+        while true {
+            positions.push(Vec::from([rank - 1, file + 1]));
+
+            rank = rank - 1;
+            file = file + 1;
+
+            if (rank == 0 || file == 7) {
+                rank = piecePos[0];
+                file = piecePos[1];
+                break;
+            }
+        }
+    }
+
+    if (rank < 7 && file > 0) {
+        while true {
+            positions.push(Vec::from([rank + 1, file - 1]));
+
+            rank = rank + 1;
+            file = file - 1;
+
+            if (rank == 7 || file == 0) {
+                rank = piecePos[0];
+                file = piecePos[1];
+                break;
+            }
+        }
+    }
+
+    if (rank < 7 && file < 7) {
+        while true {
+            positions.push(Vec::from([rank + 1, file + 1]));
+
+            rank = rank + 1;
+            file = file + 1;
+
+            if (rank == 7 || file == 7) {
+                rank = piecePos[0];
+                file = piecePos[1];
+                break;
+            }
+        }
+    }
+
+    Some(positions)
+}
+
+pub fn getLegalMovesForBishop(board: &Vec<Vec<char>>, bishopPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = getPieceFromPosition(&board, &bishopPos);
+
+    if (piece == 'b' || piece == 'B') {
+        return Some(getDiagonalMoves(&board, &bishopPos).unwrap());
+    }
+
+    None
+}
+
 pub fn add(left: usize, right: usize) -> usize {
     let boardVector = convertFENtoVector(startingFEN);
 
@@ -230,7 +308,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &getLegalMovesForRook(&boardVector, &Vec::from([0, 7])));
+    println!("{:?}", &getLegalMovesForBishop(&boardVector, &Vec::from([7, 5])));
 
     left + right
 }
