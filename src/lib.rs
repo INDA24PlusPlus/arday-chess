@@ -169,6 +169,60 @@ pub fn getLegalMovesForKnight(board: &Vec<Vec<char>>, knightPos: &Vec<usize>) ->
     None
 }
 
+fn getHorizontalMoves(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let mut positions = Vec::new();
+    let rookRank = piecePos[0];
+    let rookFile = piecePos[1];
+
+    for file in 0..8 {
+        if (file == rookFile) {
+            continue;
+        }
+
+        positions.push(Vec::from([rookRank, file]));
+    }
+
+    Some(positions)
+}
+
+fn getVerticalMoves(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let mut positions = Vec::new();
+    let rookRank = piecePos[0];
+    let rookFile = piecePos[1];
+
+    for rank in 0..8 {
+        if (rank == rookFile) {
+            continue;
+        }
+
+        positions.push(Vec::from([rank, rookFile]));
+    }
+
+    Some(positions)
+}
+
+pub fn getLegalMovesForRook(board: &Vec<Vec<char>>, rookPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = getPieceFromPosition(&board, &rookPos);
+    let mut positions = Vec::new();
+
+    if (piece == 'r' || piece == 'R') {
+        let horizontalMoves = getHorizontalMoves(&board, &rookPos).unwrap();
+        let verticalMoves = getVerticalMoves(&board, &rookPos).unwrap();
+
+        for h_move in horizontalMoves {
+            positions.push(h_move);
+        }
+
+        for v_move in verticalMoves {
+            positions.push(v_move);
+        }
+
+        return Some(positions);
+    }
+
+    None
+}
+
 pub fn add(left: usize, right: usize) -> usize {
     let boardVector = convertFENtoVector(startingFEN);
 
@@ -176,7 +230,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &getLegalMovesForKnight(&boardVector, &Vec::from([7, 1])));
+    println!("{:?}", &getLegalMovesForRook(&boardVector, &Vec::from([7, 7])));
 
     left + right
 }
