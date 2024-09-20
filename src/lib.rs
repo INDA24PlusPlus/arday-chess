@@ -123,7 +123,45 @@ pub fn getLegalMovesForKnight(board: &Vec<Vec<char>>, knightPos: &Vec<usize>) ->
     let file = knightPos[1];
 
     if piece == 'n' || piece == 'N' {
-        positions.push(Vec::from([rank - 2, file - 1]));
+        if (rank > 1) {
+            if (file > 0) {
+                positions.push(Vec::from([rank - 2, file - 1]));
+            }
+
+            if (file < 7) {
+                positions.push(Vec::from([rank - 2, file + 1]));
+            }
+        }
+
+        if (rank < 6) {
+            if (file > 0) {
+                positions.push(Vec::from([rank + 2, file - 1]));
+            }
+
+            if (file < 7) {
+                positions.push(Vec::from([rank + 2, file + 1]));
+            }
+        }
+
+        if (file > 1) {
+            if (rank > 0) {
+                positions.push(Vec::from([rank - 1, file - 2]));
+            }
+
+            if (rank < 7) {
+                positions.push(Vec::from([rank + 1, file - 2]));
+            }
+        }
+
+        if (file < 6) {
+            if (rank > 0) {
+                positions.push(Vec::from([rank - 1, file + 2]));
+            }
+
+            if (rank < 7) {
+                positions.push(Vec::from([rank + 1, file + 2]));
+            }
+        }
 
         return Some(positions);
     }
@@ -138,7 +176,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &getLegalMovesForPawn(&boardVector, &Vec::from([1, 5])));
+    println!("{:?}", &getLegalMovesForKnight(&boardVector, &Vec::from([7, 1])));
 
     left + right
 }
