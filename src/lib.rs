@@ -191,7 +191,7 @@ fn getVerticalMoves(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> Option<Vec
     let rookFile = piecePos[1];
 
     for rank in 0..8 {
-        if (rank == rookFile) {
+        if (rank == rookRank) {
             continue;
         }
 
@@ -230,7 +230,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &getLegalMovesForRook(&boardVector, &Vec::from([7, 7])));
+    println!("{:?}", &getLegalMovesForRook(&boardVector, &Vec::from([0, 7])));
 
     left + right
 }
