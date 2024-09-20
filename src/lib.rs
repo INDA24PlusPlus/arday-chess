@@ -303,7 +303,7 @@ pub fn getLegalMovesForBishop(board: &Vec<Vec<char>>, bishopPos: &Vec<usize>) ->
 
 pub fn getLegalMovesForQueen(board: &Vec<Vec<char>>, queenPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
     let piece = getPieceFromPosition(&board, &queenPos);
-    let mut positions = getVerticalMoves(board, queenPos).unwrap();
+    let mut positions = getDiagonalMoves(&board, &queenPos).unwrap();
 
     if (piece == 'q' || piece == 'Q') {
         let horizontalMoves = getHorizontalMoves(&board, &queenPos).unwrap();
