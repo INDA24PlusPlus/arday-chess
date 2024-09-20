@@ -431,11 +431,11 @@ pub fn get_legal_moves_for_bishop(board: &Vec<Vec<char>>, bishop_pos: &Vec<usize
 
 pub fn get_legal_moves_for_queen(board: &Vec<Vec<char>>, queen_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let piece = get_piece_from_position(&board, &queen_pos);
-    let mut positions = get_diagonal_moves(&board, &queen_pos)?;
+    let mut positions = get_diagonal_moves(&board, &queen_pos);
 
     if piece == 'q' || piece == 'Q' {
-        let horizontal_moves = get_horizontal_moves(&board, &queen_pos)?;
-        let vertical_moves = get_vertical_moves(&board, &queen_pos)?;
+        let horizontal_moves = get_horizontal_moves(&board, &queen_pos);
+        let vertical_moves = get_vertical_moves(&board, &queen_pos);
 
         for h_move in horizontal_moves {
             positions.push(h_move);
