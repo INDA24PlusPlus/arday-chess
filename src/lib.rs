@@ -119,7 +119,7 @@ pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -
     positions
 }
 
-pub fn get_legal_moves_for_knight(board: &Vec<Vec<char>>, knight_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+pub fn get_legal_moves_for_knight(board: &Vec<Vec<char>>, knight_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let piece = get_piece_from_position(&board, &knight_pos);
     let mut positions = Vec::new();
     let rank = knight_pos[0];
@@ -166,13 +166,13 @@ pub fn get_legal_moves_for_knight(board: &Vec<Vec<char>>, knight_pos: &Vec<usize
             }
         }
 
-        return Some(positions);
+        return positions;
     }
 
-    None
+    positions
 }
 
-fn get_horizontal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+fn get_horizontal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let mut positions = Vec::new();
     let rank = piece_pos[0];
     let mut file = piece_pos[1];
@@ -232,10 +232,10 @@ fn get_horizontal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Optio
         file -= 1;
     }
 
-    Some(positions)
+    positions
 }
 
-fn get_vertical_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+fn get_vertical_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let mut positions = Vec::new();
     let mut rank = piece_pos[0];
     let file = piece_pos[1];
@@ -294,16 +294,16 @@ fn get_vertical_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<
         rank -= 1;
     }
 
-    Some(positions)
+    positions
 }
 
-pub fn get_legal_moves_for_rook(board: &Vec<Vec<char>>, rook_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+pub fn get_legal_moves_for_rook(board: &Vec<Vec<char>>, rook_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let piece = get_piece_from_position(&board, &rook_pos);
     let mut positions = Vec::new();
 
     if piece == 'r' || piece == 'R' {
-        let horizontal_moves = get_horizontal_moves(&board, &rook_pos)?;
-        let vertical_moves = get_vertical_moves(&board, &rook_pos)?;
+        let horizontal_moves = get_horizontal_moves(&board, &rook_pos);
+        let vertical_moves = get_vertical_moves(&board, &rook_pos);
 
         for h_move in horizontal_moves {
             positions.push(h_move);
@@ -313,13 +313,13 @@ pub fn get_legal_moves_for_rook(board: &Vec<Vec<char>>, rook_pos: &Vec<usize>) -
             positions.push(v_move);
         }
 
-        return Some(positions);
+        return positions;
     }
 
-    None
+    positions
 }
 
-fn get_diagonal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+fn get_diagonal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let mut positions = Vec::new();
     let mut rank = piece_pos[0];
     let mut file = piece_pos[1];
@@ -408,20 +408,20 @@ fn get_diagonal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<
         }
     }
 
-    Some(positions)
+    positions
 }
 
-pub fn get_legal_moves_for_bishop(board: &Vec<Vec<char>>, bishop_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+pub fn get_legal_moves_for_bishop(board: &Vec<Vec<char>>, bishop_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let piece = get_piece_from_position(&board, &bishop_pos);
 
     if piece == 'b' || piece == 'B' {
-        return Some(get_diagonal_moves(&board, &bishop_pos)?);
+        return get_diagonal_moves(&board, &bishop_pos);
     }
 
-    None
+    Vec::new()
 }
 
-pub fn get_legal_moves_for_queen(board: &Vec<Vec<char>>, queen_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+pub fn get_legal_moves_for_queen(board: &Vec<Vec<char>>, queen_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let piece = get_piece_from_position(&board, &queen_pos);
     let mut positions = get_diagonal_moves(&board, &queen_pos)?;
 
@@ -437,13 +437,13 @@ pub fn get_legal_moves_for_queen(board: &Vec<Vec<char>>, queen_pos: &Vec<usize>)
             positions.push(v_move);
         }
 
-        return Some(positions);
+        return positions;
     }
 
-    None
+    positions
 }
 
-pub fn get_legal_moves_for_king(board: &Vec<Vec<char>>, king_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+pub fn get_legal_moves_for_king(board: &Vec<Vec<char>>, king_pos: &Vec<usize>) -> Vec<Vec<usize>> {
     let piece = get_piece_from_position(&board, &king_pos);
 
     if piece == 'k' || piece == 'K' {
@@ -491,10 +491,10 @@ pub fn get_legal_moves_for_king(board: &Vec<Vec<char>>, king_pos: &Vec<usize>) -
             }
         }
 
-        return Some(valid_positions);
+        return valid_positions;
     }
 
-    None
+    Vec::new()
 }
 
 pub fn add(left: usize, right: usize) -> usize {
