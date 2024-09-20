@@ -1,4 +1,4 @@
-const STARTING_FEN: &str = "r4k1r/2pbnppp/4p3/p1Ppb3/1p6/1PNPP1P1/P1n2PBP/1R2R1K1 w KQkq - 0 1";
+const STARTING_FEN: &str = "r4k1r/2pbnppp/4p3/p1Ppb3/3P4/1Pp1P1P1/P1n2PBP/1R2R1K1";
 
 pub fn convert_fen_to_vector(fen: &str) -> Vec<Vec<char>> {
     let mut new_vector = Vec::new();
@@ -57,30 +57,31 @@ pub fn get_pawn_capture_pos(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>, pawn:
         target_rank = pawn_pos[0] - 1;
     }
 
-    let square1 = pawn_pos[1] + 1;
-    let square2 = pawn_pos[1] - 1;
+    if (pawn_pos[1] > 0) {
+        let square2 = pawn_pos[1] - 1;
+        let target2 = Vec::from([target_rank, square2]);
+        let has_enemy2 = has_enemy_piece(&board, &target2, pawn);
 
-    let target1 = Vec::from([target_rank, square1]);
-    let target2 = Vec::from([target_rank, square2]);
+        if pawn_pos[1] == 7 && has_enemy2 {
+            target.push(Vec::from([target_rank, square2]));
+        }
 
-    let has_enemy1 = has_enemy_piece(&board, &target1, pawn);
-    let has_enemy2 = has_enemy_piece(&board, &target2, pawn);
-
-    if pawn_pos[1] == 0 && has_enemy1 {
-        target.push(Vec::from([target_rank, square1]));
+        else if has_enemy2 {
+            target.push(Vec::from([target_rank, square2]));
+        }
     }
 
-    else if pawn_pos[1] == 7 && has_enemy2 {
-        target.push(Vec::from([target_rank, square2]));
-    }
+    if (pawn_pos[1] < 7) {
+        let square1 = pawn_pos[1] + 1;
+        let target1 = Vec::from([target_rank, square1]);
+        let has_enemy1 = has_enemy_piece(&board, &target1, pawn);
 
-    else {
-        if has_enemy1 {
+        if pawn_pos[1] == 0 && has_enemy1 {
             target.push(Vec::from([target_rank, square1]));
         }
 
-        if has_enemy2 {
-            target.push(Vec::from([target_rank, square2]));
+        else if has_enemy1 {
+            target.push(Vec::from([target_rank, square1]));
         }
     }
 
@@ -501,7 +502,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &get_legal_moves_for_pawn(&board_vector, &Vec::from([3, 2])));
+    println!("{:?}", &get_pawn_capture_pos(&board_vector, &Vec::from([4, 3]), 'P'));
 
     left + right
 }
