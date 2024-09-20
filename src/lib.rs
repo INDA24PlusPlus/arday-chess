@@ -97,7 +97,7 @@ pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -
             positions.push(Vec::from([3, pawn_pos[1]])); // 2 step pawn move
         }
 
-        positions.push(Vec::from([2, pawn_pos[1]])); // 1 step pawn move
+        positions.push(Vec::from([pawn_pos[0] + 1, pawn_pos[1]])); // 1 step pawn move
 
         return Some(positions);
     }
@@ -107,7 +107,7 @@ pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -
             positions.push(Vec::from([4, pawn_pos[1]])); // 2 step pawn move
         }
 
-        positions.push(Vec::from([5, pawn_pos[1]])); // 1 step pawn move
+        positions.push(Vec::from([pawn_pos[0] - 1, pawn_pos[1]])); // 1 step pawn move
 
         return Some(positions);
     }
@@ -501,7 +501,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &get_legal_moves_for_rook(&board_vector, &Vec::from([7, 1])));
+    println!("{:?}", &get_legal_moves_for_pawn(&board_vector, &Vec::from([3, 2])));
 
     left + right
 }
