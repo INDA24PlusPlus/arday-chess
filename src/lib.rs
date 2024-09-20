@@ -1,4 +1,4 @@
-const STARTING_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const STARTING_FEN: &str = "r4k1r/2pbnppp/4p3/p1Ppb3/1p6/1PNPP1P1/P1n2PBP/1R2R1K1 w KQkq - 0 1";
 
 pub fn convert_fen_to_vector(fen: &str) -> Vec<Vec<char>> {
     let mut new_vector = Vec::new();
@@ -171,19 +171,53 @@ pub fn get_legal_moves_for_knight(board: &Vec<Vec<char>>, knight_pos: &Vec<usize
 
 fn get_horizontal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
     let mut positions = Vec::new();
-    let rook_rank = piece_pos[0];
-    let rook_file = piece_pos[1];
+    let rank = piece_pos[0];
+    let mut file = piece_pos[1];
 
-    for file in 0..8 {
-        if file == rook_file {
-            continue;
-        }
+    loop {
+        if file == 7 {
+            file = piece_pos[1];
 
-        if board[rook_rank][file] != '-' {
             break;
         }
 
-        positions.push(Vec::from([rook_rank, file]));
+        if rank == piece_pos[0] && file == piece_pos[1] {
+            file += 1;
+            continue;
+        }
+
+        if board[rank][file] != '-'  {
+            file = piece_pos[1];
+
+            break;
+        }
+
+        positions.push(Vec::from([rank, file]));
+
+        file += 1;
+    }
+
+    loop {
+        if file == 0 {
+            file = piece_pos[1];
+
+            break;
+        }
+
+        if rank == piece_pos[0] && file == piece_pos[1] {
+            file -= 1;
+            continue;
+        }
+
+        if board[rank][file] != '-' {
+            file = piece_pos[1];
+
+            break;
+        }
+
+        positions.push(Vec::from([rank, file]));
+
+        file -= 1;
     }
 
     Some(positions)
@@ -191,19 +225,53 @@ fn get_horizontal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Optio
 
 fn get_vertical_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
     let mut positions = Vec::new();
-    let rook_rank = piece_pos[0];
-    let rook_file = piece_pos[1];
+    let mut rank = piece_pos[0];
+    let file = piece_pos[1];
 
-    for rank in 0..8 {
-        if rank == rook_rank {
-            continue;
-        }
+    loop {
+        if rank == 7 {
+            rank = piece_pos[0];
 
-        if board[rank][rook_file] != '-' {
             break;
         }
 
-        positions.push(Vec::from([rank, rook_file]));
+        if rank == piece_pos[0] && file == piece_pos[1] {
+            rank += 1;
+            continue;
+        }
+
+        if board[rank][file] != '-' {
+            rank = piece_pos[0];
+
+            break;
+        }
+
+        positions.push(Vec::from([rank, file]));
+
+        rank += 1;
+    }
+
+    loop {
+        if rank == 0 {
+            rank = piece_pos[0];
+
+            break;
+        }
+
+        if rank == piece_pos[0] && file == piece_pos[1] {
+            rank -= 1;
+            continue;
+        }
+
+        if board[rank][file] != '-' {
+            rank = piece_pos[0];
+
+            break;
+        }
+
+        positions.push(Vec::from([rank, file]));
+
+        rank -= 1;
     }
 
     Some(positions)
@@ -416,7 +484,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &get_legal_moves_for_king(&board_vector, &Vec::from([7, 4])));
+    println!("{:?}", &get_legal_moves_for_rook(&board_vector, &Vec::from([7, 4])));
 
     left + right
 }
