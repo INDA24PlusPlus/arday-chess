@@ -176,6 +176,10 @@ fn get_horizontal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Optio
 
     loop {
         if file == 7 {
+            if rank != piece_pos[0] || file != piece_pos[1] {
+                positions.push(Vec::from([rank, 7]));
+            }
+
             file = piece_pos[1];
 
             break;
@@ -199,6 +203,11 @@ fn get_horizontal_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Optio
 
     loop {
         if file == 0 {
+            println!("Adding {}, {}", rank, file);
+            if rank != piece_pos[0] || file != piece_pos[1] {
+                positions.push(Vec::from([rank, 0]));
+            }
+
             file = piece_pos[1];
 
             break;
@@ -230,6 +239,10 @@ fn get_vertical_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<
 
     loop {
         if rank == 7 {
+            if file != piece_pos[1] || rank != piece_pos[0] {
+                positions.push(Vec::from([7, file]));
+            }
+
             rank = piece_pos[0];
 
             break;
@@ -246,13 +259,17 @@ fn get_vertical_moves(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> Option<
             break;
         }
 
-        positions.push(Vec::from([rank, file]));
+        positions.push(Vec::from([0, file]));
 
         rank += 1;
     }
 
     loop {
         if rank == 0 {
+            if file != piece_pos[1] || rank != piece_pos[0] {
+                positions.push(Vec::from([rank, file]));
+            }
+
             rank = piece_pos[0];
 
             break;
@@ -484,7 +501,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &get_legal_moves_for_rook(&board_vector, &Vec::from([7, 4])));
+    println!("{:?}", &get_legal_moves_for_rook(&board_vector, &Vec::from([7, 1])));
 
     left + right
 }
