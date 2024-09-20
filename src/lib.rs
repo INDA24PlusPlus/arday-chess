@@ -1,113 +1,113 @@
-const startingFEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const STARTING_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-pub fn convertFENtoVector(fen: &str) -> Vec<Vec<char>> {
-    let mut newVector = Vec::new();
-    let position = startingFEN.split(" ").collect::<Vec<&str>>()[0];
+pub fn convert_fen_to_vector(fen: &str) -> Vec<Vec<char>> {
+    let mut new_vector = Vec::new();
+    let position = STARTING_FEN.split(" ").collect::<Vec<&str>>()[0];
 
     for rank in position.split("/").collect::<Vec<&str>>() {
-        let mut rowVector = Vec::new();
+        let mut row_vector = Vec::new();
 
         for square in rank.chars() {
             match square.to_digit(10) {
                 Some(num) => {
                     let num = num as i32;
 
-                    for i in 0..num {
-                        rowVector.push('-');
+                    for _i in 0..num {
+                        row_vector.push('-');
                     }
                 }
 
-                None => rowVector.push(square)
+                None => row_vector.push(square)
             }
         }
 
-        newVector.push(rowVector);
+        new_vector.push(row_vector);
     }
 
-    newVector
+    new_vector
 }
 
-pub fn getPieceFromPosition(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> char {
-    board[piecePos[0]][piecePos[1]]
+pub fn get_piece_from_position(board: &Vec<Vec<char>>, piece_pos: &Vec<usize>) -> char {
+    board[piece_pos[0]][piece_pos[1]]
 }
 
-pub fn hasEnemyPiece(board: &Vec<Vec<char>>, pos: &Vec<usize>, currentPiece: char) -> bool {
-    let piece = getPieceFromPosition(&board, &pos);
+pub fn has_enemy_piece(board: &Vec<Vec<char>>, pos: &Vec<usize>, current_piece: char) -> bool {
+    let piece = get_piece_from_position(&board, &pos);
 
-    if currentPiece.is_uppercase() && piece.is_lowercase() {
+    if current_piece.is_uppercase() && piece.is_lowercase() {
         return true;
     }
 
-    if currentPiece.is_lowercase() && piece.is_uppercase() {
+    if current_piece.is_lowercase() && piece.is_uppercase() {
         return true;
     }
 
     false
 }
 
-pub fn getPawnCapturePos(board: &Vec<Vec<char>>, pawnPos: &Vec<usize>, pawn: char) -> Option<Vec<Vec<usize>>> {
+pub fn get_pawn_capture_pos(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>, pawn: char) -> Option<Vec<Vec<usize>>> {
     let mut target = Vec::new();
-    let mut targetRank = 0;
+    let mut target_rank = 0;
 
-    if (pawn.is_lowercase()) {
-        targetRank = pawnPos[0] + 1;
+    if pawn.is_lowercase() {
+        target_rank = pawn_pos[0] + 1;
     }
 
     else {
-        targetRank = pawnPos[0] - 1;
+        target_rank = pawn_pos[0] - 1;
     }
 
-    let square1 = pawnPos[1] + 1;
-    let square2 = pawnPos[1] - 1;
+    let square1 = pawn_pos[1] + 1;
+    let square2 = pawn_pos[1] - 1;
 
-    let target1 = Vec::from([targetRank, square1]);
-    let target2 = Vec::from([targetRank, square2]);
+    let target1 = Vec::from([target_rank, square1]);
+    let target2 = Vec::from([target_rank, square2]);
 
-    let hasEnemy1 = hasEnemyPiece(&board, &target1, pawn);
-    let hasEnemy2 = hasEnemyPiece(&board, &target2, pawn);
+    let has_enemy1 = has_enemy_piece(&board, &target1, pawn);
+    let has_enemy2 = has_enemy_piece(&board, &target2, pawn);
 
-    if pawnPos[1] == 0 && hasEnemy1 {
-        target.push(Vec::from([targetRank, square1]));
+    if pawn_pos[1] == 0 && has_enemy1 {
+        target.push(Vec::from([target_rank, square1]));
     }
 
-    else if pawnPos[1] == 7 && hasEnemy2 {
-        target.push(Vec::from([targetRank, square2]));
+    else if pawn_pos[1] == 7 && has_enemy2 {
+        target.push(Vec::from([target_rank, square2]));
     }
 
     else {
-        if hasEnemy1 {
-            target.push(Vec::from([targetRank, square1]));
+        if has_enemy1 {
+            target.push(Vec::from([target_rank, square1]));
         }
 
-        if hasEnemy2 {
-            target.push(Vec::from([targetRank, square2]));
+        if has_enemy2 {
+            target.push(Vec::from([target_rank, square2]));
         }
     }
 
     Some(target)
 }
 
-pub fn getLegalMovesForPawn(board: &Vec<Vec<char>>, pawnPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
-    let piece = getPieceFromPosition(&board, &pawnPos);
+pub fn get_legal_moves_for_pawn(board: &Vec<Vec<char>>, pawn_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = get_piece_from_position(&board, &pawn_pos);
 
     let mut positions = Vec::new();
 
     if piece == 'p' {
-        if pawnPos[0] == 1 {
-            positions.push(Vec::from([3, pawnPos[1]])); // 2 step pawn move
+        if pawn_pos[0] == 1 {
+            positions.push(Vec::from([3, pawn_pos[1]])); // 2 step pawn move
         }
 
-        positions.push(Vec::from([2, pawnPos[1]])); // 1 step pawn move
+        positions.push(Vec::from([2, pawn_pos[1]])); // 1 step pawn move
 
         return Some(positions);
     }
 
     else if piece == 'P' {
-        if pawnPos[0] == 6 {
-            positions.push(Vec::from([4, pawnPos[1]])); // 2 step pawn move
+        if pawn_pos[0] == 6 {
+            positions.push(Vec::from([4, pawn_pos[1]])); // 2 step pawn move
         }
 
-        positions.push(Vec::from([5, pawnPos[1]])); // 1 step pawn move
+        positions.push(Vec::from([5, pawn_pos[1]])); // 1 step pawn move
 
         return Some(positions);
     }
@@ -116,49 +116,49 @@ pub fn getLegalMovesForPawn(board: &Vec<Vec<char>>, pawnPos: &Vec<usize>) -> Opt
     None
 }
 
-pub fn getLegalMovesForKnight(board: &Vec<Vec<char>>, knightPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
-    let piece = getPieceFromPosition(&board, &knightPos);
+pub fn get_legal_moves_for_knight(board: &Vec<Vec<char>>, knight_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = get_piece_from_position(&board, &knight_pos);
     let mut positions = Vec::new();
-    let rank = knightPos[0];
-    let file = knightPos[1];
+    let rank = knight_pos[0];
+    let file = knight_pos[1];
 
     if piece == 'n' || piece == 'N' {
-        if (rank > 1) {
-            if (file > 0) {
+        if rank > 1 {
+            if file > 0 {
                 positions.push(Vec::from([rank - 2, file - 1]));
             }
 
-            if (file < 7) {
+            if file < 7 {
                 positions.push(Vec::from([rank - 2, file + 1]));
             }
         }
 
-        if (rank < 6) {
-            if (file > 0) {
+        if rank < 6 {
+            if file > 0 {
                 positions.push(Vec::from([rank + 2, file - 1]));
             }
 
-            if (file < 7) {
+            if file < 7 {
                 positions.push(Vec::from([rank + 2, file + 1]));
             }
         }
 
-        if (file > 1) {
-            if (rank > 0) {
+        if file > 1 {
+            if rank > 0 {
                 positions.push(Vec::from([rank - 1, file - 2]));
             }
 
-            if (rank < 7) {
+            if rank < 7 {
                 positions.push(Vec::from([rank + 1, file - 2]));
             }
         }
 
-        if (file < 6) {
-            if (rank > 0) {
+        if file < 6 {
+            if rank > 0 {
                 positions.push(Vec::from([rank - 1, file + 2]));
             }
 
-            if (rank < 7) {
+            if rank < 7 {
                 positions.push(Vec::from([rank + 1, file + 2]));
             }
         }
@@ -169,51 +169,51 @@ pub fn getLegalMovesForKnight(board: &Vec<Vec<char>>, knightPos: &Vec<usize>) ->
     None
 }
 
-fn getHorizontalMoves(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+fn get_horizontal_moves(piece_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
     let mut positions = Vec::new();
-    let rookRank = piecePos[0];
-    let rookFile = piecePos[1];
+    let rook_rank = piece_pos[0];
+    let rook_file = piece_pos[1];
 
     for file in 0..8 {
-        if (file == rookFile) {
+        if file == rook_file {
             continue;
         }
 
-        positions.push(Vec::from([rookRank, file]));
+        positions.push(Vec::from([rook_rank, file]));
     }
 
     Some(positions)
 }
 
-fn getVerticalMoves(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+fn get_vertical_moves(piece_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
     let mut positions = Vec::new();
-    let rookRank = piecePos[0];
-    let rookFile = piecePos[1];
+    let rook_rank = piece_pos[0];
+    let rook_file = piece_pos[1];
 
     for rank in 0..8 {
-        if (rank == rookRank) {
+        if rank == rook_rank {
             continue;
         }
 
-        positions.push(Vec::from([rank, rookFile]));
+        positions.push(Vec::from([rank, rook_file]));
     }
 
     Some(positions)
 }
 
-pub fn getLegalMovesForRook(board: &Vec<Vec<char>>, rookPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
-    let piece = getPieceFromPosition(&board, &rookPos);
+pub fn get_legal_moves_for_rook(board: &Vec<Vec<char>>, rook_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = get_piece_from_position(&board, &rook_pos);
     let mut positions = Vec::new();
 
-    if (piece == 'r' || piece == 'R') {
-        let horizontalMoves = getHorizontalMoves(&board, &rookPos).unwrap();
-        let verticalMoves = getVerticalMoves(&board, &rookPos).unwrap();
+    if piece == 'r' || piece == 'R' {
+        let horizontal_moves = get_horizontal_moves(&rook_pos)?;
+        let vertical_moves = get_vertical_moves(&rook_pos)?;
 
-        for h_move in horizontalMoves {
+        for h_move in horizontal_moves {
             positions.push(h_move);
         }
 
-        for v_move in verticalMoves {
+        for v_move in vertical_moves {
             positions.push(v_move);
         }
 
@@ -223,66 +223,66 @@ pub fn getLegalMovesForRook(board: &Vec<Vec<char>>, rookPos: &Vec<usize>) -> Opt
     None
 }
 
-fn getDiagonalMoves(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+fn get_diagonal_moves(piece_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
     let mut positions = Vec::new();
-    let mut rank = piecePos[0];
-    let mut file = piecePos[1];
+    let mut rank = piece_pos[0];
+    let mut file = piece_pos[1];
 
-    if (rank > 0 && file > 0) {
-        while true {
+    if rank > 0 && file > 0 {
+        loop {
             positions.push(Vec::from([rank - 1, file - 1]));
 
             rank = rank - 1;
             file = file - 1;
 
-            if (rank == 0 || file == 0) {
-                rank = piecePos[0];
-                file = piecePos[1];
+            if rank == 0 || file == 0 {
+                rank = piece_pos[0];
+                file = piece_pos[1];
                 break;
             }
         }
     }
 
-    if (rank > 0 && file < 7) {
-        while true {
+    if rank > 0 && file < 7 {
+        loop {
             positions.push(Vec::from([rank - 1, file + 1]));
 
             rank = rank - 1;
             file = file + 1;
 
-            if (rank == 0 || file == 7) {
-                rank = piecePos[0];
-                file = piecePos[1];
+            if rank == 0 || file == 7 {
+                rank = piece_pos[0];
+                file = piece_pos[1];
                 break;
             }
         }
     }
 
-    if (rank < 7 && file > 0) {
-        while true {
+    if rank < 7 && file > 0 {
+        loop {
             positions.push(Vec::from([rank + 1, file - 1]));
 
             rank = rank + 1;
             file = file - 1;
 
-            if (rank == 7 || file == 0) {
-                rank = piecePos[0];
-                file = piecePos[1];
+            if rank == 7 || file == 0 {
+                rank = piece_pos[0];
+                file = piece_pos[1];
                 break;
             }
         }
     }
 
-    if (rank < 7 && file < 7) {
-        while true {
+    if rank < 7 && file < 7 {
+        loop {
             positions.push(Vec::from([rank + 1, file + 1]));
 
             rank = rank + 1;
             file = file + 1;
 
-            if (rank == 7 || file == 7) {
-                rank = piecePos[0];
-                file = piecePos[1];
+            if rank == 7 || file == 7 {
+                rank = piece_pos[0];
+                file = piece_pos[1];
                 break;
             }
         }
@@ -291,30 +291,76 @@ fn getDiagonalMoves(board: &Vec<Vec<char>>, piecePos: &Vec<usize>) -> Option<Vec
     Some(positions)
 }
 
-pub fn getLegalMovesForBishop(board: &Vec<Vec<char>>, bishopPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
-    let piece = getPieceFromPosition(&board, &bishopPos);
+pub fn get_legal_moves_for_bishop(board: &Vec<Vec<char>>, bishop_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = get_piece_from_position(&board, &bishop_pos);
 
-    if (piece == 'b' || piece == 'B') {
-        return Some(getDiagonalMoves(&board, &bishopPos).unwrap());
+    if piece == 'b' || piece == 'B' {
+        return Some(get_diagonal_moves(&bishop_pos)?);
     }
 
     None
 }
 
-pub fn getLegalMovesForQueen(board: &Vec<Vec<char>>, queenPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
-    let piece = getPieceFromPosition(&board, &queenPos);
-    let mut positions = getDiagonalMoves(&board, &queenPos).unwrap();
+pub fn get_legal_moves_for_queen(board: &Vec<Vec<char>>, queen_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = get_piece_from_position(&board, &queen_pos);
+    let mut positions = get_diagonal_moves(&queen_pos)?;
 
-    if (piece == 'q' || piece == 'Q') {
-        let horizontalMoves = getHorizontalMoves(&board, &queenPos).unwrap();
-        let verticalMoves = getVerticalMoves(&board, &queenPos).unwrap();
+    if piece == 'q' || piece == 'Q' {
+        let horizontal_moves = get_horizontal_moves(&queen_pos)?;
+        let vertical_moves = get_vertical_moves(&queen_pos)?;
 
-        for h_move in horizontalMoves {
+        for h_move in horizontal_moves {
             positions.push(h_move);
         }
 
-        for v_move in verticalMoves {
+        for v_move in vertical_moves {
             positions.push(v_move);
+        }
+
+        return Some(positions);
+    }
+
+    None
+}
+
+pub fn get_legal_moves_for_king(board: &Vec<Vec<char>>, king_pos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = get_piece_from_position(&board, &king_pos);
+
+    if piece == 'k' || piece == 'K' {
+        let king_rank = king_pos[0];
+        let king_file = king_pos[1];
+        let mut positions = Vec::new();
+
+        if king_rank > 0 {
+            if king_file > 0 {
+                positions.push(Vec::from([king_rank - 1, king_file - 1]));
+            }
+
+            if king_file < 7 {
+                positions.push(Vec::from([king_rank - 1, king_file + 1]));
+            }
+
+            positions.push(Vec::from([king_rank - 1, king_file]));
+        }
+
+        if king_rank < 7 {
+            if king_file > 0 {
+                positions.push(Vec::from([king_rank + 1, king_file - 1]));
+            }
+
+            if king_file < 7 {
+                positions.push(Vec::from([king_rank + 1, king_file + 1]));
+            }
+
+            positions.push(Vec::from([king_rank + 1, king_file]));
+        }
+
+        if king_file > 0 {
+            positions.push(Vec::from([king_rank, king_file - 1]));
+        }
+
+        if king_file < 7 {
+            positions.push(Vec::from([king_rank, king_file + 1]));
         }
 
         return Some(positions);
@@ -324,13 +370,13 @@ pub fn getLegalMovesForQueen(board: &Vec<Vec<char>>, queenPos: &Vec<usize>) -> O
 }
 
 pub fn add(left: usize, right: usize) -> usize {
-    let boardVector = convertFENtoVector(startingFEN);
+    let board_vector = convert_fen_to_vector(STARTING_FEN);
 
-    for item in &boardVector {
+    for item in &board_vector {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &getLegalMovesForQueen(&boardVector, &Vec::from([7, 3])));
+    println!("{:?}", &get_legal_moves_for_king(&board_vector, &Vec::from([7, 4])));
 
     left + right
 }
