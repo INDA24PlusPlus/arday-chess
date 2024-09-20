@@ -2,7 +2,7 @@ const STARTING_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -
 
 pub fn convert_fen_to_vector(fen: &str) -> Vec<Vec<char>> {
     let mut new_vector = Vec::new();
-    let position = STARTING_FEN.split(" ").collect::<Vec<&str>>()[0];
+    let position = fen.split(" ").collect::<Vec<&str>>()[0];
 
     for rank in position.split("/").collect::<Vec<&str>>() {
         let mut row_vector = Vec::new();
