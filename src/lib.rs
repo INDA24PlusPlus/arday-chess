@@ -301,6 +301,28 @@ pub fn getLegalMovesForBishop(board: &Vec<Vec<char>>, bishopPos: &Vec<usize>) ->
     None
 }
 
+pub fn getLegalMovesForQueen(board: &Vec<Vec<char>>, queenPos: &Vec<usize>) -> Option<Vec<Vec<usize>>> {
+    let piece = getPieceFromPosition(&board, &queenPos);
+    let mut positions = getVerticalMoves(board, queenPos).unwrap();
+
+    if (piece == 'q' || piece == 'Q') {
+        let horizontalMoves = getHorizontalMoves(&board, &queenPos).unwrap();
+        let verticalMoves = getVerticalMoves(&board, &queenPos).unwrap();
+
+        for h_move in horizontalMoves {
+            positions.push(h_move);
+        }
+
+        for v_move in verticalMoves {
+            positions.push(v_move);
+        }
+
+        return Some(positions);
+    }
+
+    None
+}
+
 pub fn add(left: usize, right: usize) -> usize {
     let boardVector = convertFENtoVector(startingFEN);
 
@@ -308,7 +330,7 @@ pub fn add(left: usize, right: usize) -> usize {
         println!("{:?}", item);
     }
 
-    println!("{:?}", &getLegalMovesForBishop(&boardVector, &Vec::from([7, 5])));
+    println!("{:?}", &getLegalMovesForQueen(&boardVector, &Vec::from([7, 3])));
 
     left + right
 }
