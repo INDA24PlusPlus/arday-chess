@@ -623,7 +623,6 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
 
     if rank < 7 && file < 7 {
         loop {
-            println!("{} {}", rank, file);
             if board.get(rank + 1, file + 1) != '-' {
                 if is_enemy(board, piece_pos, Position::create(rank + 1, file + 1)) {
                     positions.push(Position::create(rank + 1, file + 1));
@@ -691,7 +690,6 @@ pub fn get_legal_moves_for_pawn(board: &Board, pawn_pos: &Position) -> Vec<Posit
         }
     }
 
-    println!("No pawn found");
     positions
 }
 pub fn get_legal_moves_for_knight(board: &Board, knight_pos: &Position) -> Vec<Position> {
