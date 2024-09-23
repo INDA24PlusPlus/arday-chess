@@ -744,7 +744,18 @@ pub fn get_legal_moves_for_knight(board: &Board, knight_pos: &Position) -> Vec<P
         let mut valid_moves = Vec::new();
 
         for position in positions {
+            let newRank = position.rank;
+            let newFile = position.file;
+
             if (board.get(position.rank, position.file) == '-') {
+                valid_moves.push(position);
+            }
+
+            else if board.get(position.rank, position.file).is_lowercase() && board.get(knight_pos.rank, knight_pos.file).is_uppercase() {
+                valid_moves.push(position);
+            }
+
+            else if board.get(position.rank, position.file).is_uppercase() && board.get(knight_pos.rank, knight_pos.file).is_lowercase() {
                 valid_moves.push(position);
             }
         }
