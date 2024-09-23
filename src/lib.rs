@@ -15,7 +15,7 @@ pub type ChessBoard = Vec<Vec<char>>;
 
 #[derive(Debug)]
 pub struct Board {
-    board: ChessBoard,
+    pub board: ChessBoard,
 }
 
 impl Board {
