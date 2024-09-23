@@ -405,6 +405,10 @@ fn get_horizontal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         }
 
         if board.get(rank, file) != '-'  {
+            if is_enemy(board, piece_pos, Position::create(rank, file)) {
+                positions.push(Position::create(rank, file));
+            }
+
             file = piece_pos.file;
 
             break;
@@ -432,6 +436,10 @@ fn get_horizontal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         }
 
         if board.get(rank, file) != '-' {
+            if is_enemy(board, piece_pos, Position::create(rank, file)) {
+                positions.push(Position::create(rank, file));
+            }
+
             file = piece_pos.file;
 
             break;
@@ -443,6 +451,24 @@ fn get_horizontal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     }
 
     positions
+}
+
+fn is_enemy(board: &Board, current_pos: &Position, target_pos: Position) -> bool {
+    let current_piece = board.get(current_pos.rank, current_pos.file);
+
+    if current_piece.is_lowercase() {
+        if board.get(target_pos.rank, target_pos.file).is_uppercase() {
+            return true;
+        }
+    }
+
+    else {
+        if board.get(target_pos.rank, target_pos.file).is_lowercase() {
+            return true;
+        }
+    }
+
+    false
 }
 
 fn get_vertical_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
@@ -467,6 +493,10 @@ fn get_vertical_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         }
 
         if board.get(rank, file) != '-' {
+            if is_enemy(board, piece_pos, Position::create(rank, file)) {
+                positions.push(Position::create(rank, file));
+            }
+
             rank = piece_pos.rank;
 
             break;
@@ -494,6 +524,10 @@ fn get_vertical_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         }
 
         if board.get(rank, file) != '-' {
+            if is_enemy(board, piece_pos, Position::create(rank, file)) {
+                positions.push(Position::create(rank, file));
+            }
+
             rank = piece_pos.rank;
 
             break;
