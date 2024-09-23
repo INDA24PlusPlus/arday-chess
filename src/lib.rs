@@ -19,27 +19,27 @@ pub struct Board {
 }
 
 impl Board {
-    fn create() -> Board {
+    pub fn create() -> Board {
         Board {
             board: convert_fen_to_vector(STARTING_FEN),
         }
     }
 
-    fn create_from_fen(FEN: &str) -> Board {
+    pub fn create_from_fen(FEN: &str) -> Board {
         Board {
             board: convert_fen_to_vector(FEN),
         }
     }
 
-    fn get(&self, rank: usize, file: usize) -> char {
+    pub fn get(&self, rank: usize, file: usize) -> char {
         self.board[rank][file]
     }
 
-    fn pushRow(&mut self, row: Vec<char>) {
+    pub fn pushRow(&mut self, row: Vec<char>) {
         self.board.push(row);
     }
 
-    fn clone(&self) -> Self {
+    pub fn clone(&self) -> Self {
         // Create a new Board instance
         Board {
             board: self.board.clone(), // Clone the 2D vector
@@ -206,7 +206,7 @@ pub struct Position {
 }
 
 impl Position {
-    fn create(rank: usize, file: usize) -> Position {
+    pub fn create(rank: usize, file: usize) -> Position {
         Position {
             rank,
             file
