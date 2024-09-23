@@ -1,5 +1,5 @@
 use std::cmp::PartialEq;
-use crate::Color::WHITE;
+use crate::Color::{BLACK, WHITE};
 
 const STARTING_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
@@ -21,7 +21,7 @@ struct Board {
 impl Board {
     fn create() -> Board {
         Board {
-            board: convert_fen_to_vector(STARTING_FEN)
+            board: convert_fen_to_vector(STARTING_FEN),
         }
     }
     fn get(&self, rank: usize, file: usize) -> char {
@@ -46,56 +46,107 @@ impl Board {
         new_board
     }
 
-    pub fn generate_legal_moves(&self) -> Vec<Board> {
+    pub fn generate_legal_moves(&self, currentTurn: &Color) -> Vec<Board> {
         let mut boards: Vec<Board> = Vec::new();
 
         for (rowIndex, row) in self.board.iter().enumerate() {
             for (fileIndex, piece) in row.iter().enumerate() {
-                match piece {
-                    &'P' => {
-                        let legal_moves = get_legal_moves_for_pawn(self, &Position::create(rowIndex, fileIndex));
+                if *currentTurn == WHITE {
+                    match piece {
+                        &'P' => {
+                            let legal_moves = get_legal_moves_for_pawn(self, &Position::create(rowIndex, fileIndex));
 
-                        for legal_move in &legal_moves {
-                            let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), legal_move, 'P');
-                            boards.push(new_board);
+                            for legal_move in &legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), legal_move, 'P');
+                                boards.push(new_board);
+                            }
                         }
-                    }
-                    &'R' => {
-                        let legal_moves = get_legal_moves_for_rook(self, &Position::create(rowIndex, fileIndex));
-                        for legal_move in legal_moves {
-                            let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'R');
-                            boards.push(new_board);
+                        &'R' => {
+                            let legal_moves = get_legal_moves_for_rook(self, &Position::create(rowIndex, fileIndex));
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'R');
+                                boards.push(new_board);
+                            }
                         }
-                    }
-                    &'N' => {
-                        let legal_moves = get_legal_moves_for_knight(self, &Position::create(rowIndex, fileIndex));
-                        for legal_move in legal_moves {
-                            let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'N');
-                            boards.push(new_board);
+                        &'N' => {
+                            let legal_moves = get_legal_moves_for_knight(self, &Position::create(rowIndex, fileIndex));
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'N');
+                                boards.push(new_board);
+                            }
                         }
-                    }
-                    &'B' => {
-                        let legal_moves = get_legal_moves_for_bishop(self, &Position::create(rowIndex, fileIndex));
-                        for legal_move in legal_moves {
-                            let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'B');
-                            boards.push(new_board);
+                        &'B' => {
+                            let legal_moves = get_legal_moves_for_bishop(self, &Position::create(rowIndex, fileIndex));
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'B');
+                                boards.push(new_board);
+                            }
                         }
-                    }
-                    &'Q' => {
-                        let legal_moves = get_legal_moves_for_queen(self, &Position::create(rowIndex, fileIndex));
-                        for legal_move in legal_moves {
-                            let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'Q');
-                            boards.push(new_board);
+                        &'Q' => {
+                            let legal_moves = get_legal_moves_for_queen(self, &Position::create(rowIndex, fileIndex));
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'Q');
+                                boards.push(new_board);
+                            }
                         }
-                    }
-                    &'K' => {
-                        let legal_moves = get_legal_moves_for_king(self, &Position::create(rowIndex, fileIndex), WHITE, Game::new());
-                        for legal_move in legal_moves {
-                            let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'K');
-                            boards.push(new_board);
+                        &'K' => {
+                            let legal_moves = get_legal_moves_for_king(self, &Position::create(rowIndex, fileIndex), WHITE, Game::new());
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'K');
+                                boards.push(new_board);
+                            }
                         }
+                        _ => {}
                     }
-                    _ => {}
+                }
+
+                else {
+                    match piece {
+                        &'p' => {
+                            let legal_moves = get_legal_moves_for_pawn(self, &Position::create(rowIndex, fileIndex));
+
+                            for legal_move in &legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), legal_move, 'p');
+                                boards.push(new_board);
+                            }
+                        }
+                        &'r' => {
+                            let legal_moves = get_legal_moves_for_rook(self, &Position::create(rowIndex, fileIndex));
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'r');
+                                boards.push(new_board);
+                            }
+                        }
+                        &'n' => {
+                            let legal_moves = get_legal_moves_for_knight(self, &Position::create(rowIndex, fileIndex));
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'n');
+                                boards.push(new_board);
+                            }
+                        }
+                        &'b' => {
+                            let legal_moves = get_legal_moves_for_bishop(self, &Position::create(rowIndex, fileIndex));
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'b');
+                                boards.push(new_board);
+                            }
+                        }
+                        &'q' => {
+                            let legal_moves = get_legal_moves_for_queen(self, &Position::create(rowIndex, fileIndex));
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'q');
+                                boards.push(new_board);
+                            }
+                        }
+                        &'k' => {
+                            let legal_moves = get_legal_moves_for_king(self, &Position::create(rowIndex, fileIndex), BLACK, Game::new());
+                            for legal_move in legal_moves {
+                                let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'k');
+                                boards.push(new_board);
+                            }
+                        }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -110,24 +161,30 @@ impl Board {
     }
 
 
-    pub fn perft(&self, depth: usize) -> u64 {
+    pub fn perft(&self, depth: usize, currentColor: Color) -> u64 {
         if depth == 0 {
             return 1;
         }
 
         let mut nodes = 0;
 
-        let moves = self.generate_legal_moves();
+        let moves = self.generate_legal_moves(&currentColor);
 
         // Recursively count nodes at the next depth for each legal move
         for new_board in moves {
-            nodes += new_board.perft(depth - 1);
+            let newColor = if currentColor == WHITE {
+                BLACK
+            }
+            else {
+                WHITE
+            };
 
-            /*
+            nodes += new_board.perft(depth - 1, newColor);
+
+
             new_board.print();
             println!("");
             println!("");
-             */
         }
 
         nodes
@@ -757,7 +814,14 @@ mod tests {
     #[test]
     fn test_perft_depth_1() {
         let board = Board::create();
-        let nodes = board.perft(1);
+        let nodes = board.perft(1, WHITE);
         assert_eq!(nodes, 20, "Perft Depth 1 failed: Expected 20 nodes, got {}", nodes);
+    }
+
+    #[test]
+    fn test_perft_depth_2() {
+        let board = Board::create();
+        let nodes = board.perft(2, WHITE);
+        assert_eq!(nodes, 400, "Perft Depth 2 failed: Expected 400 nodes, got {}", nodes);
     }
 }
