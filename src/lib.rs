@@ -549,6 +549,10 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     if rank > 0 && file > 0 {
         loop {
             if board.get(rank - 1, file - 1) != '-' {
+                if is_enemy(board, piece_pos, Position::create(rank - 1, file - 1)) {
+                    positions.push(Position::create(rank - 1, file - 1));
+                }
+
                 rank = piece_pos.rank;
                 file = piece_pos.file;
                 break;
@@ -570,6 +574,10 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     if rank > 0 && file < 7 {
         loop {
             if board.get(rank - 1, file + 1) != '-' {
+                if is_enemy(board, piece_pos, Position::create(rank - 1, file + 1)) {
+                    positions.push(Position::create(rank - 1, file + 1));
+                }
+
                 rank = piece_pos.rank;
                 file = piece_pos.file;
                 break;
@@ -591,6 +599,10 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     if rank < 7 && file > 0 {
         loop {
             if board.get(rank + 1, file - 1) != '-' {
+                if is_enemy(board, piece_pos, Position::create(rank + 1, file - 1)) {
+                    positions.push(Position::create(rank + 1, file - 1));
+                }
+
                 rank = piece_pos.rank;
                 file = piece_pos.file;
                 break;
@@ -613,6 +625,10 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         loop {
             println!("{} {}", rank, file);
             if board.get(rank + 1, file + 1) != '-' {
+                if is_enemy(board, piece_pos, Position::create(rank + 1, file + 1)) {
+                    positions.push(Position::create(rank + 1, file + 1));
+                }
+
                 rank = piece_pos.rank;
                 file = piece_pos.file;
                 break;
