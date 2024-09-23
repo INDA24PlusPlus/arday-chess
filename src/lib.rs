@@ -472,7 +472,7 @@ fn get_vertical_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
             break;
         }
 
-        positions.push(Position::create(0, file));
+        positions.push(Position::create(rank, file));
 
         rank += 1;
     }
