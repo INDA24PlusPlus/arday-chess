@@ -24,6 +24,13 @@ impl Board {
             board: convert_fen_to_vector(STARTING_FEN),
         }
     }
+
+    fn create_from_fen(FEN: &str) -> Board {
+        Board {
+            board: convert_fen_to_vector(FEN),
+        }
+    }
+
     fn get(&self, rank: usize, file: usize) -> char {
         self.board[rank][file]
     }
@@ -181,10 +188,11 @@ impl Board {
 
             nodes += new_board.perft(depth - 1, newColor);
 
-
+            /*
             new_board.print();
             println!("");
             println!("");
+             */
         }
 
         nodes
@@ -567,7 +575,8 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
 
     if rank < 7 && file < 7 {
         loop {
-            if board.get(rank + 1, file - 1) != '-' {
+            println!("{} {}", rank, file);
+            if board.get(rank + 1, file + 1) != '-' {
                 rank = piece_pos.rank;
                 file = piece_pos.file;
                 break;
@@ -807,6 +816,19 @@ pub fn get_legal_moves_for_rook(board: &Board, rook_pos: &Position) -> Vec<Posit
     positions
 }
 
+pub fn run() {
+    let board = Board::create_from_fen("rnbqkbnr/pppp1ppp/8/4p3/Q1P2P2/3PN1PB/PP1BP2P/RN2K2R");
+    board.print();
+
+    println!("{}", board.get(4, 0));
+
+    let queen_moves = get_legal_moves_for_queen(&board, &Position::create(4, 0));
+
+    for legal_move in queen_moves {
+        println!("{:?}", legal_move);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -823,5 +845,12 @@ mod tests {
         let board = Board::create();
         let nodes = board.perft(2, WHITE);
         assert_eq!(nodes, 400, "Perft Depth 2 failed: Expected 400 nodes, got {}", nodes);
+    }
+
+    #[test]
+    fn test_perft_depth_3() {
+        let board = Board::create();
+        let nodes = board.perft(3, WHITE);
+        assert_eq!(nodes, 8902, "Perft Depth 3 failed: Expected 8902 nodes, got {}", nodes);
     }
 }
