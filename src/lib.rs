@@ -1,4 +1,5 @@
 use std::cmp::PartialEq;
+use serde::Serialize;
 use crate::Color::{BLACK, WHITE};
 
 const STARTING_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
@@ -199,6 +200,7 @@ impl Board {
     }
 }
 
+#[derive(Serialize)]
 #[derive(Debug)]
 pub struct Position {
     rank: usize,

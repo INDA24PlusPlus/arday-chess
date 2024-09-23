@@ -1,6 +1,6 @@
 [package]
 name = "arday11ChessLibrary"
-version = "0.3.8"
+version = "0.3.9"
 edition = "2021"
 description = "test"
 license = "MIT"
@@ -8,6 +8,7 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+serde = { version = "1.0.210", features = ["derive"] }
 
 [profile.dev]
 opt-level = 1
