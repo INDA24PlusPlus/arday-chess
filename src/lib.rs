@@ -3,7 +3,7 @@ use crate::Color::{BLACK, WHITE};
 
 const STARTING_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
-enum Status {
+pub enum Status {
     WHITE_TO_MOVE,
     BLACK_TO_MOVE,
     DRAW,
@@ -11,10 +11,10 @@ enum Status {
     BLACK_HAS_CHECKMATE,
 }
 
-type ChessBoard = Vec<Vec<char>>;
+pub type ChessBoard = Vec<Vec<char>>;
 
 #[derive(Debug)]
-struct Board {
+pub struct Board {
     board: ChessBoard,
 }
 
@@ -200,7 +200,7 @@ impl Board {
 }
 
 #[derive(Debug)]
-struct Position {
+pub struct Position {
     rank: usize,
     file: usize
 }
@@ -215,17 +215,17 @@ impl Position {
 }
 
 #[derive(PartialEq, Debug)]
-enum Color {
+pub enum Color {
     WHITE,
     BLACK
 }
 
-enum Move {
+pub enum Move {
     REGULAR,
     CAPTURE,
     CASTLE
 }
-struct Game {
+pub struct Game {
     status: Status,
     current_move: Move,
     white_castle_short: bool,
