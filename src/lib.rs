@@ -1,9 +1,14 @@
 use std::cmp::PartialEq;
+use std::collections::HashMap;
 use serde::Serialize;
 use crate::Color::{BLACK, WHITE};
+use crate::Move::{CAPTURE, REGULAR};
+use crate::Status::{BLACK_TO_MOVE, WHITE_TO_MOVE};
+use std::io::*;
 
 const STARTING_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
+#[derive(PartialEq, Debug)]
 pub enum Status {
     WHITE_TO_MOVE,
     BLACK_TO_MOVE,
@@ -53,7 +58,7 @@ impl Board {
         new_board.board[end.rank][end.file] = piece;
         new_board
     }
-
+    /*
     pub fn generate_legal_moves(&self, currentTurn: &Color) -> Vec<Board> {
         let mut boards: Vec<Board> = Vec::new();
 
@@ -62,7 +67,7 @@ impl Board {
                 if *currentTurn == WHITE {
                     match piece {
                         &'P' => {
-                            let legal_moves = get_legal_moves_for_pawn(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_pawn_moves(self, &Position::create(rowIndex, fileIndex));
 
                             for legal_move in &legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), legal_move, 'P');
@@ -70,35 +75,35 @@ impl Board {
                             }
                         }
                         &'R' => {
-                            let legal_moves = get_legal_moves_for_rook(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_rook_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'R');
                                 boards.push(new_board);
                             }
                         }
                         &'N' => {
-                            let legal_moves = get_legal_moves_for_knight(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_knight_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'N');
                                 boards.push(new_board);
                             }
                         }
                         &'B' => {
-                            let legal_moves = get_legal_moves_for_bishop(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_bishop_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'B');
                                 boards.push(new_board);
                             }
                         }
                         &'Q' => {
-                            let legal_moves = get_legal_moves_for_queen(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_queen_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'Q');
                                 boards.push(new_board);
                             }
                         }
                         &'K' => {
-                            let legal_moves = get_legal_moves_for_king(self, &Position::create(rowIndex, fileIndex), WHITE, Game::new());
+                            let legal_moves = get_king_moves(self, &Position::create(rowIndex, fileIndex), WHITE, Game::new());
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'K');
                                 boards.push(new_board);
@@ -111,7 +116,7 @@ impl Board {
                 else {
                     match piece {
                         &'p' => {
-                            let legal_moves = get_legal_moves_for_pawn(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_pawn_moves(self, &Position::create(rowIndex, fileIndex));
 
                             for legal_move in &legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), legal_move, 'p');
@@ -119,35 +124,35 @@ impl Board {
                             }
                         }
                         &'r' => {
-                            let legal_moves = get_legal_moves_for_rook(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_rook_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'r');
                                 boards.push(new_board);
                             }
                         }
                         &'n' => {
-                            let legal_moves = get_legal_moves_for_knight(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_knight_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'n');
                                 boards.push(new_board);
                             }
                         }
                         &'b' => {
-                            let legal_moves = get_legal_moves_for_bishop(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_bishop_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'b');
                                 boards.push(new_board);
                             }
                         }
                         &'q' => {
-                            let legal_moves = get_legal_moves_for_queen(self, &Position::create(rowIndex, fileIndex));
+                            let legal_moves = get_queen_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'q');
                                 boards.push(new_board);
                             }
                         }
                         &'k' => {
-                            let legal_moves = get_legal_moves_for_king(self, &Position::create(rowIndex, fileIndex), BLACK, Game::new());
+                            let legal_moves = get_king_moves(self, &Position::create(rowIndex, fileIndex));
                             for legal_move in legal_moves {
                                 let new_board = Self::make_move(self, Position::create(rowIndex, fileIndex), &legal_move, 'k');
                                 boards.push(new_board);
@@ -161,6 +166,7 @@ impl Board {
 
         boards
     }
+     */
 
     pub fn print(&self) {
         for row in &self.board {
@@ -168,7 +174,7 @@ impl Board {
         }
     }
 
-
+    /*
     pub fn perft(&self, depth: usize, currentColor: Color) -> u64 {
         if depth == 0 {
             return 1;
@@ -198,10 +204,12 @@ impl Board {
 
         nodes
     }
+     */
 }
 
 #[derive(Serialize)]
 #[derive(Debug)]
+#[derive(Eq, Hash, PartialEq)]
 pub struct Position {
     rank: usize,
     file: usize
@@ -228,23 +236,27 @@ pub enum Move {
     CASTLE
 }
 pub struct Game {
+    board: Board,
     status: Status,
     current_move: Move,
     white_castle_short: bool,
     white_castle_long: bool,
     black_castle_short: bool,
     black_castle_long: bool,
+    en_passant_possible: bool,
 }
 
 impl Game {
     pub fn new() -> Game {
         Game {
-            status: Status::WHITE_TO_MOVE,
-            current_move: Move::REGULAR,
+            status: WHITE_TO_MOVE,
+            current_move: REGULAR,
             white_castle_short: true,
             white_castle_long: true,
             black_castle_short: true,
-            black_castle_long: true
+            black_castle_long: true,
+            en_passant_possible: false,
+            board: Board::create(),
         }
     }
 }
@@ -280,12 +292,12 @@ fn get_piece_from_position(board: &Board, piece_pos: &Position) -> char {
     board.get(piece_pos.rank, piece_pos.file)
 }
 
-fn get_castling_position(game: Game, board: &Board, color: Color) -> Vec<Position> {
+fn get_castling_position(game: &Game) -> Vec<Position> {
     let mut positons = Vec::new();
 
-    if color == WHITE {
+    if game.status == WHITE_TO_MOVE {
         if game.white_castle_short {
-            if board.get(7, 5) == '-' && board.get(7, 6) == '-' {
+            if game.board.get(7, 5) == '-' && game.board.get(7, 6) == '-' {
                 positons.push(Position {
                     rank: 7,
                     file: 6
@@ -294,7 +306,7 @@ fn get_castling_position(game: Game, board: &Board, color: Color) -> Vec<Positio
         }
 
         if game.white_castle_short {
-            if board.get(7, 1) == '-' && board.get(7, 2) == '-' && board.get(7, 3) == '-' {
+            if game.board.get(7, 1) == '-' && game.board.get(7, 2) == '-' && game.board.get(7, 3) == '-' {
                 positons.push(Position {
                     rank: 7,
                     file: 2
@@ -305,7 +317,7 @@ fn get_castling_position(game: Game, board: &Board, color: Color) -> Vec<Positio
 
     else {
         if game.black_castle_short {
-            if board.get(0, 5) == '-' && board.get(0, 6) == '-' {
+            if game.board.get(0, 5) == '-' && game.board.get(0, 6) == '-' {
                 positons.push(Position {
                     rank: 0,
                     file: 6
@@ -314,7 +326,7 @@ fn get_castling_position(game: Game, board: &Board, color: Color) -> Vec<Positio
         }
 
         if game.black_castle_long {
-            if board.get(0, 1) == '-' && board.get(0, 2) == '-' && board.get(0, 3) == '-' {
+            if game.board.get(0, 1) == '-' && game.board.get(0, 2) == '-' && game.board.get(0, 3) == '-' {
                 positons.push(Position {
                     rank: 0,
                     file: 2
@@ -405,7 +417,7 @@ fn get_horizontal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         }
 
         if board.get(rank, file) != '-'  {
-            if is_enemy(board, piece_pos, Position::create(rank, file)) {
+            if is_enemy(board, piece_pos, &Position::create(rank, file)) {
                 positions.push(Position::create(rank, file));
             }
 
@@ -436,7 +448,7 @@ fn get_horizontal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         }
 
         if board.get(rank, file) != '-' {
-            if is_enemy(board, piece_pos, Position::create(rank, file)) {
+            if is_enemy(board, piece_pos, &Position::create(rank, file)) {
                 positions.push(Position::create(rank, file));
             }
 
@@ -453,7 +465,7 @@ fn get_horizontal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     positions
 }
 
-fn is_enemy(board: &Board, current_pos: &Position, target_pos: Position) -> bool {
+fn is_enemy(board: &Board, current_pos: &Position, target_pos: &Position) -> bool {
     let current_piece = board.get(current_pos.rank, current_pos.file);
 
     if current_piece.is_lowercase() {
@@ -493,7 +505,7 @@ fn get_vertical_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         }
 
         if board.get(rank, file) != '-' {
-            if is_enemy(board, piece_pos, Position::create(rank, file)) {
+            if is_enemy(board, piece_pos, &Position::create(rank, file)) {
                 positions.push(Position::create(rank, file));
             }
 
@@ -524,7 +536,7 @@ fn get_vertical_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
         }
 
         if board.get(rank, file) != '-' {
-            if is_enemy(board, piece_pos, Position::create(rank, file)) {
+            if is_enemy(board, piece_pos, &Position::create(rank, file)) {
                 positions.push(Position::create(rank, file));
             }
 
@@ -549,7 +561,7 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     if rank > 0 && file > 0 {
         loop {
             if board.get(rank - 1, file - 1) != '-' {
-                if is_enemy(board, piece_pos, Position::create(rank - 1, file - 1)) {
+                if is_enemy(board, piece_pos, &Position::create(rank - 1, file - 1)) {
                     positions.push(Position::create(rank - 1, file - 1));
                 }
 
@@ -574,7 +586,7 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     if rank > 0 && file < 7 {
         loop {
             if board.get(rank - 1, file + 1) != '-' {
-                if is_enemy(board, piece_pos, Position::create(rank - 1, file + 1)) {
+                if is_enemy(board, piece_pos, &Position::create(rank - 1, file + 1)) {
                     positions.push(Position::create(rank - 1, file + 1));
                 }
 
@@ -599,7 +611,7 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     if rank < 7 && file > 0 {
         loop {
             if board.get(rank + 1, file - 1) != '-' {
-                if is_enemy(board, piece_pos, Position::create(rank + 1, file - 1)) {
+                if is_enemy(board, piece_pos, &Position::create(rank + 1, file - 1)) {
                     positions.push(Position::create(rank + 1, file - 1));
                 }
 
@@ -624,7 +636,7 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
     if rank < 7 && file < 7 {
         loop {
             if board.get(rank + 1, file + 1) != '-' {
-                if is_enemy(board, piece_pos, Position::create(rank + 1, file + 1)) {
+                if is_enemy(board, piece_pos, &Position::create(rank + 1, file + 1)) {
                     positions.push(Position::create(rank + 1, file + 1));
                 }
 
@@ -651,20 +663,20 @@ fn get_diagonal_moves(board: &Board, piece_pos: &Position) -> Vec<Position> {
 
 // Exported Functions
 
-pub fn get_legal_moves_for_pawn(board: &Board, pawn_pos: &Position) -> Vec<Position> {
-    let piece = get_piece_from_position(&board, &pawn_pos);
+pub fn get_pawn_moves(game: &Game, pawn_pos: &Position) -> Vec<Position> {
+    let piece = get_piece_from_position(&game.board, &pawn_pos);
 
     let mut positions: Vec<Position> = Vec::new();
-
+    println!("{:?}", pawn_pos);
     if piece == 'p' {
-        if (board.get(pawn_pos.rank + 1,pawn_pos.file) == '-') {
-            if pawn_pos.rank == 1 && board.get(3,pawn_pos.file) == '-' {
+        if (game.board.get(pawn_pos.rank + 1,pawn_pos.file) == '-') {
+            if pawn_pos.rank == 1 && game.board.get(3,pawn_pos.file) == '-' {
                 positions.push(Position::create(3, pawn_pos.file)); // 2 step pawn move
             }
 
             positions.push(Position::create(pawn_pos.rank + 1, pawn_pos.file)); // 1 step pawn move
 
-            let capture_positions = get_pawn_capture_pos(board, pawn_pos, 'p');
+            let capture_positions = get_pawn_capture_pos(&game.board, pawn_pos, 'p');
 
             for capture in capture_positions {
                 positions.push(capture);
@@ -673,14 +685,14 @@ pub fn get_legal_moves_for_pawn(board: &Board, pawn_pos: &Position) -> Vec<Posit
             return positions;
         }
     } else if piece == 'P' {
-        if board.get(pawn_pos.rank - 1, pawn_pos.file) == '-' {
-            if pawn_pos.rank == 6 && board.get(4, pawn_pos.rank) == '-' {
+        if game.board.get(pawn_pos.rank - 1, pawn_pos.file) == '-' {
+            if pawn_pos.rank == 6 && game.board.get(4, pawn_pos.rank) == '-' {
                 positions.push(Position::create(4, pawn_pos.file)); // 2 step pawn move
             }
 
             positions.push(Position::create(pawn_pos.rank - 1, pawn_pos.file)); // 1 step pawn move
 
-            let capture_positions = get_pawn_capture_pos(board, pawn_pos, 'P');
+            let capture_positions = get_pawn_capture_pos(&game.board, pawn_pos, 'P');
 
             for capture in capture_positions {
                 positions.push(capture);
@@ -692,7 +704,7 @@ pub fn get_legal_moves_for_pawn(board: &Board, pawn_pos: &Position) -> Vec<Posit
 
     positions
 }
-pub fn get_legal_moves_for_knight(board: &Board, knight_pos: &Position) -> Vec<Position> {
+pub fn get_knight_moves(board: &Board, knight_pos: &Position) -> Vec<Position> {
     let piece = get_piece_from_position(&board, &knight_pos);
     let mut positions: Vec<Position> = Vec::new();
     let rank = knight_pos.rank;
@@ -764,7 +776,7 @@ pub fn get_legal_moves_for_knight(board: &Board, knight_pos: &Position) -> Vec<P
     positions
 }
 
-pub fn get_legal_moves_for_bishop(board: &Board, bishop_pos: &Position) -> Vec<Position> {
+pub fn get_bishop_moves(board: &Board, bishop_pos: &Position) -> Vec<Position> {
     let piece = get_piece_from_position(&board, &bishop_pos);
 
     if piece == 'b' || piece == 'B' {
@@ -774,7 +786,7 @@ pub fn get_legal_moves_for_bishop(board: &Board, bishop_pos: &Position) -> Vec<P
     Vec::new()
 }
 
-pub fn get_legal_moves_for_queen(board: &Board, queen_pos: &Position) -> Vec<Position> {
+pub fn get_queen_moves(board: &Board, queen_pos: &Position) -> Vec<Position> {
     let piece = get_piece_from_position(&board, &queen_pos);
     let mut positions = get_diagonal_moves(&board, &queen_pos);
 
@@ -796,8 +808,8 @@ pub fn get_legal_moves_for_queen(board: &Board, queen_pos: &Position) -> Vec<Pos
     positions
 }
 
-pub fn get_legal_moves_for_king(board: &Board, king_pos: &Position, color: Color, game: Game) -> Vec<Position> {
-    let piece = get_piece_from_position(&board, &king_pos);
+pub fn get_king_moves(game: &Game, king_pos: &Position) -> Vec<Position> {
+    let piece = get_piece_from_position(&game.board, &king_pos);
 
     if piece == 'k' || piece == 'K' {
         let king_rank = king_pos.rank;
@@ -837,10 +849,10 @@ pub fn get_legal_moves_for_king(board: &Board, king_pos: &Position, color: Color
         }
 
         let mut valid_positions: Vec<Position>= Vec::new();
-        let castle_positions = get_castling_position(game, board, color);
+        let castle_positions = get_castling_position(game);
 
         for position in positions {
-            if board.get(position.rank, position.file) == '-' {
+            if game.board.get(position.rank, position.file) == '-' {
                 valid_positions.push(position)
             }
         }
@@ -855,7 +867,7 @@ pub fn get_legal_moves_for_king(board: &Board, king_pos: &Position, color: Color
     Vec::new()
 }
 
-pub fn get_legal_moves_for_rook(board: &Board, rook_pos: &Position) -> Vec<Position> {
+pub fn get_rook_moves(board: &Board, rook_pos: &Position) -> Vec<Position> {
     let piece = get_piece_from_position(&board, &rook_pos);
     let mut positions = Vec::new();
 
@@ -877,16 +889,128 @@ pub fn get_legal_moves_for_rook(board: &Board, rook_pos: &Position) -> Vec<Posit
     positions
 }
 
+pub fn get_moves(game: &Game, position: &Position) -> Option<Vec<Position>> {
+    let square: char = game.board.get(position.rank, position.file);
+
+    if (square != '-') {
+        let moves = match square.to_ascii_lowercase() {
+            'p' => get_pawn_moves(&game, &position),
+            'r' => get_rook_moves(&game.board, &position),
+            'n' => get_knight_moves(&game.board, &position),
+            'b' => get_bishop_moves(&game.board, &position),
+            'q' => get_queen_moves(&game.board, &position),
+            'k' => get_king_moves(&game, &position),
+            _ => Vec::new(),
+        };
+
+        return Some(moves);
+    }
+
+    None
+}
+
+pub fn get_all_moves(game: Game) -> HashMap<Position, Vec<Position>> {
+    let mut legal_moves: HashMap<Position, Vec<Position>> = HashMap::new();
+
+    let mut row_index = 0;
+
+    for row in &game.board.board {
+        for (col, square) in row.iter().enumerate() {
+            if *square != '-' {
+                let piece = *square;
+                let position = Position::create(row_index, col);
+
+                let is_white = game.status == WHITE_TO_MOVE && piece.is_ascii_lowercase();
+                let is_black = game.status == BLACK_TO_MOVE && piece.is_ascii_uppercase();
+
+                if is_white || is_black {
+                    let moves = get_moves(&game, &position).unwrap();
+
+                    legal_moves.insert(Position::create(row_index, col), moves);
+                }
+            }
+        }
+
+        row_index += 1;
+    }
+
+    legal_moves
+}
+
+fn validate_moves(current_move: &Position, legal_moves: Vec<Position>) -> bool {
+    for legal_move in legal_moves {
+        if current_move.file == legal_move.file && current_move.rank == legal_move.rank {
+            return true;
+        }
+    }
+
+    false
+}
+
+pub fn make_move(game: &mut Game, start: &Position, end: &Position) -> Result<bool> {
+    let piece: char = game.board.get(start.rank, start.file);
+
+    if game.status == WHITE_TO_MOVE && piece.is_lowercase() {
+        return Err(Error::new(ErrorKind::Other, "Error: Cannot move black piece on white turn"))
+    }
+
+    if game.status == BLACK_TO_MOVE && piece.is_uppercase() {
+        return Err(Error::new(ErrorKind::Other, "Error: Cannot move white piece on black turn"))
+    }
+
+    let positions = get_moves(game, start).unwrap();
+
+    if validate_moves(end, positions) {
+        let isTargetEnemy = is_enemy(&game.board, start, end);
+
+        game.board.board[start.rank][start.file] = '-';
+        game.board.board[end.rank][end.file] = piece;
+
+        if isTargetEnemy {
+            game.current_move = CAPTURE;
+        }
+
+        else {
+            game.current_move = REGULAR;
+        }
+
+        if game.status == WHITE_TO_MOVE {
+            game.status = BLACK_TO_MOVE;
+        }
+
+        else if game.status == BLACK_TO_MOVE {
+            game.status = WHITE_TO_MOVE;
+        }
+
+        return Ok(true);
+    }
+
+    Err(Error::new(ErrorKind::Other, "Error: Move is invalid"))
+}
+
 pub fn run() {
-    let board = Board::create_from_fen("rnbqkbnr/pppp1ppp/8/4p3/Q1P2P2/3PN1PB/PP1BP2P/RN2K2R");
-    board.print();
+    let mut game = Game::new();
 
-    println!("{}", board.get(4, 0));
+    loop {
+        game.board.print();
+        println!("");
 
-    let queen_moves = get_legal_moves_for_queen(&board, &Position::create(4, 0));
+        let mut input = String::new();
 
-    for legal_move in queen_moves {
-        println!("{:?}", legal_move);
+        println!("Enter position");
+        stdin().read_line(&mut input).unwrap();
+
+        let nums: Vec<usize> = input.split_whitespace().map(|w| w.parse().unwrap()).collect();
+        let startRow = nums[0];
+        let startFile = nums[1];
+
+        let endRow = nums[2];
+        let endFile = nums[3];
+
+        match make_move(&mut game, &Position::create(startRow, startFile), &Position::create(endRow, endFile)) {
+            Ok(v) => println!("Success"),
+            Err(e) => println!("{}", e)
+        }
     }
 }
 

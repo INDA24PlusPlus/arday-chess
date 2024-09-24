@@ -56,5 +56,11 @@ This function makes a move and modifies the game struct and returns a boolean
 on whether the operation was successful or not
 
 ```rust
-const success: bool = ChessLibrary::make_move(startPosition, endPosition, game);
+let mut game = Game::new();
+
+match make_move(&mut game, &Position::create(startRow, startFile), &Position::create(endRow, endFile)) {
+    Ok(v) => println!("Success"),
+    Err(e) => println!("{}", e)
+    }
+}
 ```
